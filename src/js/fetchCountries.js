@@ -1,6 +1,4 @@
-import { error } from '@pnotify/core';
-import '@pnotify/core/dist/BrightTheme.css';
-import '@pnotify/core/dist/PNotify.css';
+import notice from './notifications';
 
 const BASE_URL = 'https://restcountries.eu/rest/v2';
 
@@ -10,14 +8,11 @@ function fetchCountriesList(query) {
       if (response.status === 404) throw new Error();
       return response.json();
     })
-    .catch(onError);
+    .catch(notice.onNotFoundError);
 }
 
 function onError() {
-  error({
-    text: 'There is no such country. Please try another search!',
-    delay: 4000,
-  });
+  notice.onNotFoundError();
 }
 
 export default { fetchCountriesList };

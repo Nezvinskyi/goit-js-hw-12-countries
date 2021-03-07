@@ -3,9 +3,7 @@ import countriesListTpl from './templates/countriesList.hbs';
 import countryCardTpl from './templates/countryCard.hbs';
 import API from './js/fetchCountries';
 import { debounce } from 'lodash';
-import { error, success } from '@pnotify/core';
-import '@pnotify/core/dist/BrightTheme.css';
-import '@pnotify/core/dist/PNotify.css';
+import notice from './js/notifications';
 
 const refs = {
   body: document.querySelector('body'),
@@ -15,13 +13,7 @@ const refs = {
 };
 let furtherSearchQuery = '';
 
-refs.input.addEventListener('input', debounce(onSearch, 1000));
-refs.output.addEventListener('click', onListClick);
-
-function onListClick(event) {
-  furtherSearchQuery = event.target.textContent;
-  API.fetchCountriesList(furtherSearchQuery).then(renderCountryCard);
-}
+refs.input.addEventListener('input', debounce(onSearch, 500));
 
 function onSearch(event) {
   event.preventDefault();
@@ -32,28 +24,27 @@ function onSearch(event) {
   API.fetchCountriesList(searchQuery).then(data => {
     if (!data) return;
     if (data.length > 10) {
-      error({
-        text: 'Too many items found. Please enter a more specific query!',
-        type: 'error',
-        delay: 4000,
-      });
-
+      notice.onTooManyError();
       console.warn('more than 10 items');
       return;
     }
 
     if (data.length > 1) {
       API.fetchCountriesList(searchQuery).then(renderCountriesList);
-      success({
-        text: `Your search found ${data.length} countries. Click on any item in the list to see the country card`,
-        delay: 4000,
-      });
+      notice.onSuccess(data);
+      refs.output.addEventListener('click', onListClick);
     }
 
     if (data.length === 1) {
       API.fetchCountriesList(searchQuery).then(renderCountryCard);
     }
   });
+}
+
+function onListClick(event) {
+  furtherSearchQuery = event.target.textContent;
+  API.fetchCountriesList(furtherSearchQuery).then(renderCountryCard);
+  refs.output.removeEventListener('click', onListClick);
 }
 
 function renderCountriesList(listData) {

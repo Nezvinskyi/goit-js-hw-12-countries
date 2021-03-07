@@ -25,6 +25,7 @@ function onListClick(event) {
 
 function onSearch(event) {
   event.preventDefault();
+  refs.output.innerHTML = '';
   const searchQuery = event.target.value;
   if (searchQuery === '') return;
 
@@ -34,6 +35,7 @@ function onSearch(event) {
       error({
         text: 'Too many items found. Please enter a more specific query!',
         type: 'error',
+        delay: 4000,
       });
 
       console.warn('more than 10 items');

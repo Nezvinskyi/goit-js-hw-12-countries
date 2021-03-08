@@ -30,13 +30,13 @@ function onSearch(event) {
     }
 
     if (data.length > 1) {
-      API.fetchCountriesList(searchQuery).then(renderCountriesList);
+      renderCountriesList(data);
       notice.onSuccess(data);
       refs.output.addEventListener('click', onListClick);
     }
 
     if (data.length === 1) {
-      API.fetchCountriesList(searchQuery).then(renderCountryCard);
+      renderCountryCard(data);
     }
   });
 }

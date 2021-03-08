@@ -4,14 +4,17 @@ import countryCardTpl from './templates/countryCard.hbs';
 import API from './js/fetchCountries';
 import { debounce } from 'lodash';
 import notice from './js/notifications';
+import getRefs from './js/get-refs';
 
-const refs = {
-  body: document.querySelector('body'),
-  input: document.querySelector('#searchQuery'),
-  spinner: document.querySelector('.icon-container'),
-  output: document.getElementById('container'),
-  notification: document.querySelector('.notification'),
-};
+const refs = getRefs();
+
+// const refs = {
+//   body: document.querySelector('body'),
+//   input: document.querySelector('#searchQuery'),
+//   spinner: document.querySelector('.icon-container'),
+//   output: document.getElementById('container'),
+//   notification: document.querySelector('.notification'),
+// };
 let furtherSearchQuery = '';
 
 refs.input.addEventListener('input', debounce(onSearch, 500));
@@ -21,14 +24,18 @@ function onSearch(event) {
   refs.spinner.classList.remove('is-hidden');
   refs.output.innerHTML = '';
   const searchQuery = event.target.value;
-  if (searchQuery === '') return;
+
+  if (searchQuery === '') {
+    refs.spinner.classList.add('is-hidden');
+    return;
+  }
 
   API.fetchCountriesList(searchQuery).then(data => {
+    // console.log(data);
     if (!data) return;
     if (data.length > 10) {
       notice.onTooManyError();
       console.warn('more than 10 items');
-      refs.spinner.classList.add('is-hidden');
       return;
     }
 
@@ -36,12 +43,14 @@ function onSearch(event) {
       renderCountriesList(data);
       notice.onSuccess(data);
       refs.output.addEventListener('click', onListClick);
-      refs.spinner.classList.add('is-hidden');
     }
 
     if (data.length === 1) {
       renderCountryCard(data);
-      refs.spinner.classList.add('is-hidden');
+    }
+    if (data.length === 0) {
+      console.log(data);
+      return;
     }
   });
 }
@@ -59,4 +68,5 @@ function renderCountriesList(listData) {
 function renderCountryCard(countryData) {
   refs.output.innerHTML = countryCardTpl(countryData);
   refs.input.value = '';
+  refs.output.removeEventListener('click', onListClick);
 }

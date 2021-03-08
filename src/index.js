@@ -8,6 +8,7 @@ import notice from './js/notifications';
 const refs = {
   body: document.querySelector('body'),
   input: document.querySelector('#searchQuery'),
+  spinner: document.querySelector('.icon-container'),
   output: document.getElementById('container'),
   notification: document.querySelector('.notification'),
 };
@@ -17,6 +18,7 @@ refs.input.addEventListener('input', debounce(onSearch, 500));
 
 function onSearch(event) {
   event.preventDefault();
+  refs.spinner.classList.remove('is-hidden');
   refs.output.innerHTML = '';
   const searchQuery = event.target.value;
   if (searchQuery === '') return;
@@ -26,6 +28,7 @@ function onSearch(event) {
     if (data.length > 10) {
       notice.onTooManyError();
       console.warn('more than 10 items');
+      refs.spinner.classList.add('is-hidden');
       return;
     }
 
@@ -33,10 +36,12 @@ function onSearch(event) {
       renderCountriesList(data);
       notice.onSuccess(data);
       refs.output.addEventListener('click', onListClick);
+      refs.spinner.classList.add('is-hidden');
     }
 
     if (data.length === 1) {
       renderCountryCard(data);
+      refs.spinner.classList.add('is-hidden');
     }
   });
 }

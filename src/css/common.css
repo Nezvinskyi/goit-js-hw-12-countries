@@ -78,6 +78,9 @@ input {
   right: 10px;
   top: calc(50% - 10px);
 }
+.is-hidden {
+  display: none;
+}
 .loader {
   position: relative;
   height: 20px;

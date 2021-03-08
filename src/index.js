@@ -53,4 +53,5 @@ function renderCountriesList(listData) {
 
 function renderCountryCard(countryData) {
   refs.output.innerHTML = countryCardTpl(countryData);
+  refs.input.value = '';
 }

@@ -11,20 +11,37 @@
     />
   </head>
   <body>
-    <h1>Country search</h1>
-    <form class="form-inline search-form js-search-form">
-      <div class="form-group mx-sm-3 mb-2">
-        <label for="searchQuery" class="sr-only">Country name</label>
+    <!-- <h1>Country search</h1>
+    <div class="form-inline search-form js-search-form">
+      <label for="searchQuery">Country name</label>
+      <input
+        type="text"
+        class="form-control loading"
+        name="query"
+        id="searchQuery"
+        placeholder="type your entry here"
+        autocomplete="off"
+      />
+      <div class="icon-container">
+        <i class="loader"></i>
+      </div>
+    </div> -->
+
+    <div class="container">
+      <h1>Country search</h1>
+      <div class="inputcontainer">
         <input
-          type="text"
-          class="form-control"
-          name="query"
           id="searchQuery"
+          type="text"
           placeholder="type your entry here"
           autocomplete="off"
         />
+        <div class="icon-container">
+          <i class="loader"></i>
+        </div>
       </div>
-    </form>
+    </div>
+
     <div id="container"></div>
   </body>
 </html>

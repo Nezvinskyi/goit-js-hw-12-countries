@@ -11,8 +11,4 @@ function fetchCountriesList(query) {
     .catch(notice.onNotFoundError);
 }
 
-function onError() {
-  notice.onNotFoundError();
-}
-
 export default { fetchCountriesList };

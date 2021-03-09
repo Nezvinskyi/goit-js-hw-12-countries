@@ -8,13 +8,6 @@ import getRefs from './js/get-refs';
 
 const refs = getRefs();
 
-// const refs = {
-//   body: document.querySelector('body'),
-//   input: document.querySelector('#searchQuery'),
-//   spinner: document.querySelector('.icon-container'),
-//   output: document.getElementById('container'),
-//   notification: document.querySelector('.notification'),
-// };
 let furtherSearchQuery = '';
 
 refs.input.addEventListener('input', debounce(onSearch, 500));
@@ -23,7 +16,7 @@ function onSearch(event) {
   event.preventDefault();
   refs.spinner.classList.remove('is-hidden');
   refs.output.innerHTML = '';
-  const searchQuery = event.target.value;
+  const searchQuery = event.target.value.trim();
 
   if (searchQuery === '') {
     refs.spinner.classList.add('is-hidden');

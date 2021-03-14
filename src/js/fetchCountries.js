@@ -5,20 +5,14 @@ const refs = getRefs();
 
 const BASE_URL = 'https://restcountries.eu/rest/v2';
 
-function fetchCountriesList(query) {
-  return fetch(`${BASE_URL}/name/${query}`)
-    .then(response => {
-      if (response.status === 404) {
-        throw new Error();
-      }
-      return response.json();
-    })
-    .catch(() => {
-      notice.onNotFoundError();
-    })
-    .finally(() => {
-      refs.spinner.classList.add('is-hidden');
-    });
+async function fetchCountryData(query) {
+  const response = await fetch(`${BASE_URL}/name/${query}`);
+  const countryData = await response.json();
+  refs.spinner.classList.add('is-hidden');
+  if (response.status === 404) {
+    throw new Error();
+  }
+  return countryData;
 }
 
-export default { fetchCountriesList };
+export default { fetchCountryData };

@@ -12,45 +12,38 @@ let furtherSearchQuery = '';
 
 refs.input.addEventListener('input', debounce(onSearch, 500));
 
-function onSearch(event) {
-  event.preventDefault();
-  refs.spinner.classList.remove('is-hidden');
-  refs.output.innerHTML = '';
-  const searchQuery = event.target.value.trim();
+async function onSearch(event) {
+  try {
+    event.preventDefault();
+    refs.spinner.classList.remove('is-hidden');
+    refs.output.innerHTML = '';
+    const searchQuery = event.target.value.trim();
 
-  if (searchQuery === '') {
-    refs.spinner.classList.add('is-hidden');
-    return;
-  }
-
-  API.fetchCountriesList(searchQuery).then(data => {
-    // console.log(data);
-    if (!data) return;
-    if (data.length > 10) {
-      notice.onTooManyError();
-      console.warn('more than 10 items');
+    if (searchQuery === '') {
+      refs.spinner.classList.add('is-hidden');
       return;
     }
 
-    if (data.length > 1) {
-      renderCountriesList(data);
-      notice.onSuccess(data);
+    const countryData = await API.fetchCountryData(searchQuery);
+    if (countryData.length > 10) {
+      await notice.onTooManyError();
+      await console.warn('more than 10 items');
+    } else if (countryData.length < 10 && countryData.length > 1) {
+      await renderCountriesList(countryData);
+      await notice.onSuccess(countryData);
       refs.output.addEventListener('click', onListClick);
+    } else if (countryData.length === 1) {
+      await renderCountryCard(countryData);
     }
-
-    if (data.length === 1) {
-      renderCountryCard(data);
-    }
-    if (data.length === 0) {
-      console.log(data);
-      return;
-    }
-  });
+  } catch (error) {
+    console.log(error);
+    notice.onNotFoundError();
+  }
 }
 
-function onListClick(event) {
+async function onListClick(event) {
   furtherSearchQuery = event.target.textContent;
-  API.fetchCountriesList(furtherSearchQuery).then(renderCountryCard);
+  renderCountryCard(await API.fetchCountryData(furtherSearchQuery));
   refs.output.removeEventListener('click', onListClick);
 }
 
@@ -60,6 +53,5 @@ function renderCountriesList(listData) {
 
 function renderCountryCard(countryData) {
   refs.output.innerHTML = countryCardTpl(countryData);
-  refs.input.value = '';
   refs.output.removeEventListener('click', onListClick);
 }
